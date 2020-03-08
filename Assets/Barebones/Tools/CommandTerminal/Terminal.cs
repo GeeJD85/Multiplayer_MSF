@@ -182,6 +182,9 @@ namespace CommandTerminal
             {
                 Autocomplete.Register(command.Key);
             }
+
+            //Start terminal in fullscreen mode
+            SetState(TerminalState.OpenFull);
         }
 
         void OnGUI()
