@@ -31,7 +31,7 @@ namespace GW.MasterServer
             ProfileFactory = CreateProfileInServer;
 
             server.SetHandler((short)MsfMessageCodes.UpdateDisplayNameRequest, UpdateDisplayNameRequestHandler);
-            server.SetHandler((short)MsfMessageCodes.UpdateClientProfile, UpdateGoldValueHandler);
+            server.SetHandler((short)MsfMessageCodes.UpdateGoldRequest, UpdateGoldValueHandler);
 
             //Update profile resources each 5 sec
             //InvokeRepeating(nameof(IncreaseResources), 1f, 1f);
@@ -112,7 +112,8 @@ namespace GW.MasterServer
             {
                 if (ProfilesList.TryGetValue(userExtension.Username, out ObservableServerProfile profile))
                 {
-                    profile.GetProperty<ObservableFloat>((short)ObservablePropertiyCodes.Gold).Set(newProfileData["gold"]);
+                    var gold = profile.GetProperty<ObservableFloat>((short)ObservablePropertiyCodes.Gold);
+                    gold.Add(newProfileData["gold"]);
                     message.Respond(ResponseStatus.Success);
                 }
                 else

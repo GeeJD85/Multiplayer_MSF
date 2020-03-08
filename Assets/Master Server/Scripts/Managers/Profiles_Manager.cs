@@ -87,7 +87,8 @@ namespace GW.MasterServer
             });
         }
 
-        //Sends message to customProfiles_Module to update a given value
+        //Sends message to CustomProfiles_Module to update a given value
+        //TODO: Edit method to take a string and value so method can be used for Level, XP and Gold
         public void UpdateGold(float value)
         {
             Msf.Events.Invoke(Event_Keys.showLoadingInfo, "Saving profile data... Please wait!");
@@ -99,7 +100,7 @@ namespace GW.MasterServer
                     { "gold", value },
                 };
 
-                Connection.SendMessage((short)MsfMessageCodes.UpdateClientProfile, data.ToBytes(), OnSaveProfileResponseCallback);
+                Connection.SendMessage((short)MsfMessageCodes.UpdateGoldRequest, data.ToBytes(), OnSaveProfileResponseCallback);
             });
         }
 

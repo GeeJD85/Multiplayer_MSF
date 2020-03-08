@@ -98,6 +98,9 @@
         ServerProfileRequest,
         UpdateServerProfile,
         UpdateClientProfile,
-        UpdateDisplayNameRequest
+        UpdateDisplayNameRequest,
+        UpdateLevelRequest,
+        UpdateXPRequest,
+        UpdateGoldRequest
     }
 }
