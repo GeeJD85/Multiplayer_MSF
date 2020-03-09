@@ -87,20 +87,27 @@ namespace GW.MasterServer
             });
         }
 
-        //Sends message to CustomProfiles_Module to update a given value
-        //TODO: Edit method to take a string and value so method can be used for Level, XP and Gold
-        public void UpdateGold(float value)
+        //Test method to feed data into the update function
+        public void TestUpdate()
         {
-            Msf.Events.Invoke(Event_Keys.showLoadingInfo, "Saving profile data... Please wait!");
+            UpdateProfileValues("level", 1, MsfMessageCodes.UpdateLevelValue);
+            UpdateProfileValues("xp", 500, MsfMessageCodes.UpdateXPValue);
+            UpdateProfileValues("gold", 100, MsfMessageCodes.UpdateGoldValue);            
+        }
+
+        //Sends message to CustomProfiles_Module to update a given value
+        public void UpdateProfileValues(string profileValue, float value, MsfMessageCodes msfMessageCodes)
+        {
+            Msf.Events.Invoke(Event_Keys.showLoadingInfo, "Updating profile data... Please wait!");
 
             MsfTimer.WaitForSeconds(1f, () =>
             {
                 var data = new Dictionary<string, float>
                 {
-                    { "gold", value },
+                    { profileValue , value },
                 };
 
-                Connection.SendMessage((short)MsfMessageCodes.UpdateGoldRequest, data.ToBytes(), OnSaveProfileResponseCallback);
+                Connection.SendMessage((short)msfMessageCodes, data.ToBytes(), OnSaveProfileResponseCallback);
             });
         }
 

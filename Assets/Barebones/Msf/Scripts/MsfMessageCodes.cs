@@ -99,8 +99,8 @@
         UpdateServerProfile,
         UpdateClientProfile,
         UpdateDisplayNameRequest,
-        UpdateLevelRequest,
-        UpdateXPRequest,
-        UpdateGoldRequest
+        UpdateLevelValue,
+        UpdateXPValue,
+        UpdateGoldValue,
     }
 }

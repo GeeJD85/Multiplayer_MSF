@@ -31,10 +31,9 @@ namespace GW.MasterServer
             ProfileFactory = CreateProfileInServer;
 
             server.SetHandler((short)MsfMessageCodes.UpdateDisplayNameRequest, UpdateDisplayNameRequestHandler);
-            server.SetHandler((short)MsfMessageCodes.UpdateGoldRequest, UpdateGoldValueHandler);
-
-            //Update profile resources each 5 sec
-            //InvokeRepeating(nameof(IncreaseResources), 1f, 1f);
+            server.SetHandler((short)MsfMessageCodes.UpdateLevelValue, UpdateLevelValueHandler);
+            server.SetHandler((short)MsfMessageCodes.UpdateXPValue, UpdateXPValueHandler);
+            server.SetHandler((short)MsfMessageCodes.UpdateGoldValue, UpdateGoldValueHandler);
         }
 
         private ObservableServerProfile CreateProfileInServer(string username, IPeer clientPeer)
@@ -49,16 +48,31 @@ namespace GW.MasterServer
             };
         }
 
-        public void IncreaseResources(float value)
+        //Use to update profiles from server side
+        //TODO: Make a function to target an individual profile for recovery
+        public void AmendLevelValue(float value)
         {
             foreach (var profile in ProfilesList.Values)
             {
-                //var levelProperty = profile.GetProperty<ObservableFloat>((short)ObservablePropertiyCodes.Level);
-                //var xpProperty = profile.GetProperty<ObservableFloat>((short)ObservablePropertiyCodes.XP);
-                var goldProperty = profile.GetProperty<ObservableFloat>((short)ObservablePropertiyCodes.Gold);
+                var levelProperty = profile.GetProperty<ObservableFloat>((short)ObservablePropertiyCodes.Level);
+                levelProperty.Add(value);
+            }
+        }
 
-                //levelProperty.Add(1f);
-                //xpProperty.Add(0.1f);
+        public void AmendXPValue(float value)
+        {
+            foreach (var profile in ProfilesList.Values)
+            {
+                var xpProperty = profile.GetProperty<ObservableFloat>((short)ObservablePropertiyCodes.XP);
+                xpProperty.Add(value);
+            }
+        }
+
+        public void AmendGoldValue(float value)
+        {
+            foreach (var profile in ProfilesList.Values)
+            {
+                var goldProperty = profile.GetProperty<ObservableFloat>((short)ObservablePropertiyCodes.Gold);
                 goldProperty.Add(value);
             }
         }
@@ -95,6 +109,70 @@ namespace GW.MasterServer
             }
         }
 
+        private void UpdateLevelValueHandler(IIncommingMessage message)
+        {
+            var userExtension = message.Peer.GetExtension<IUserPeerExtension>();
+
+            if (userExtension == null || userExtension.Account == null)
+            {
+                message.Respond("Invalid session", ResponseStatus.Unauthorized);
+                return;
+            }
+
+            var newProfileData = new Dictionary<string, float>().FromBytes(message.AsBytes());
+
+            try
+            {
+                if (ProfilesList.TryGetValue(userExtension.Username, out ObservableServerProfile profile))
+                {
+                    var xpProperty = profile.GetProperty<ObservableFloat>((short)ObservablePropertiyCodes.Level);
+                    xpProperty.Add(newProfileData["level"]);
+
+                    message.Respond(ResponseStatus.Success);
+                }
+                else
+                {
+                    message.Respond("Invalid session", ResponseStatus.Unauthorized);
+                }
+            }
+            catch (Exception e)
+            {
+                message.Respond($"Internal Server Error: {e}", ResponseStatus.Error);
+            }
+        }
+
+        private void UpdateXPValueHandler(IIncommingMessage message)
+        {
+            var userExtension = message.Peer.GetExtension<IUserPeerExtension>();
+
+            if (userExtension == null || userExtension.Account == null)
+            {
+                message.Respond("Invalid session", ResponseStatus.Unauthorized);
+                return;
+            }
+
+            var newProfileData = new Dictionary<string, float>().FromBytes(message.AsBytes());
+
+            try
+            {
+                if (ProfilesList.TryGetValue(userExtension.Username, out ObservableServerProfile profile))
+                {
+                    var xpProperty = profile.GetProperty<ObservableFloat>((short)ObservablePropertiyCodes.XP);
+                    xpProperty.Add(newProfileData["xp"]);
+
+                    message.Respond(ResponseStatus.Success);
+                }
+                else
+                {
+                    message.Respond("Invalid session", ResponseStatus.Unauthorized);
+                }
+            }
+            catch (Exception e)
+            {
+                message.Respond($"Internal Server Error: {e}", ResponseStatus.Error);
+            }
+        }
+
         //Update the players gold value server side and feed it back to the player profile on the clientside
         private void UpdateGoldValueHandler(IIncommingMessage message)
         {
@@ -112,8 +190,9 @@ namespace GW.MasterServer
             {
                 if (ProfilesList.TryGetValue(userExtension.Username, out ObservableServerProfile profile))
                 {
-                    var gold = profile.GetProperty<ObservableFloat>((short)ObservablePropertiyCodes.Gold);
-                    gold.Add(newProfileData["gold"]);
+                    var goldProperty = profile.GetProperty<ObservableFloat>((short)ObservablePropertiyCodes.Gold);
+                    goldProperty.Add(newProfileData["gold"]);
+
                     message.Respond(ResponseStatus.Success);
                 }
                 else
