@@ -8,4 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Master Server/My_Client.unity
     guid: b90f9bc8f90a73742a17a6514f4b78ac
+  - enabled: 0
+    path: Assets/Master Server/My_MasterServer.unity
+    guid: 0fb5a2953000bed42a90708f6fd91b25
   m_configObjects: {}

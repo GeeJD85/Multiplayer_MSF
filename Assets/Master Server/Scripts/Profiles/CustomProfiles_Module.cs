@@ -1,5 +1,4 @@
-﻿using Aevien.Utilities;
-using Barebones.Networking;
+﻿using Barebones.Networking;
 using Barebones.MasterServer;
 using System;
 using System.Collections.Generic;
@@ -48,7 +47,7 @@ namespace GW.MasterServer
             };
         }
 
-        //Use to update profiles from server side
+        //Use to update ALL profiles from server side
         //TODO: Make a function to target an individual profile for recovery
         public void AmendLevelValue(float value)
         {
@@ -77,6 +76,7 @@ namespace GW.MasterServer
             }
         }
 
+        #region Handlers
         private void UpdateDisplayNameRequestHandler(IIncommingMessage message)
         {
             var userExtension = message.Peer.GetExtension<IUserPeerExtension>();
@@ -173,7 +173,6 @@ namespace GW.MasterServer
             }
         }
 
-        //Update the players gold value server side and feed it back to the player profile on the clientside
         private void UpdateGoldValueHandler(IIncommingMessage message)
         {
             var userExtension = message.Peer.GetExtension<IUserPeerExtension>();
@@ -205,5 +204,6 @@ namespace GW.MasterServer
                 message.Respond($"Internal Server Error: {e}", ResponseStatus.Error);
             }
         }
-    }    
+        #endregion Hndlers
+    }
 }
