@@ -78,14 +78,15 @@ namespace Barebones.MasterServer
 
         protected virtual void Start()
         {
-            // Start master server at start
-            if (Msf.Args.StartMaster || (Msf.Runtime.IsEditor && autoStartInEditor))
+            //// Start master server at start
+            //if (Msf.Args.StartMaster || (Msf.Runtime.IsEditor && autoStartInEditor))
+            //{
+            // Start the master server on next frame
+            MsfTimer.WaitForEndOfFrame(() =>
             {
-                // Start the master server on next frame
-                MsfTimer.WaitForEndOfFrame(() => {
-                    StartServer(port);
-                });
-            }
+                StartServer(port);
+            });
+            //}
         }
 
         /// <summary>
