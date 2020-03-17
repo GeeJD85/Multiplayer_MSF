@@ -2,12 +2,14 @@
 using Barebones.Networking;
 using UnityEngine;
 using TMPro;
+using System.Text.RegularExpressions;
+using Aevien.UI;
 
 namespace GW.MasterServer
 {
-    public class Global_Chat : MonoBehaviour
+    public class Chat_Manager : MonoBehaviour
     {
-        enum ChatChannel { Global, Private }
+        enum ChatChannel { Global, Private, Channel }
         [SerializeField]
         ChatChannel chatChannel;
 
@@ -20,11 +22,13 @@ namespace GW.MasterServer
         [SerializeField]
         private TMP_Text chatChannelLabel;
 
+        private ProfileSettings_View profileSettingsView;
+
         bool chatIsActive;
         int chatType;
 
         private void Awake()
-        {
+        {            
             Msf.Client.Chat.OnMessageReceivedEvent += OnMessageReceived;
             chatChannelLabel.text = chatChannel.ToString();
             chatChannel = ChatChannel.Global;
@@ -32,6 +36,8 @@ namespace GW.MasterServer
 
         public void JoinChat()
         {
+            profileSettingsView = ViewsManager.GetView<ProfileSettings_View>("ProfileSettingsView");
+
             MsfTimer.WaitForEndOfFrame(() =>
             {
                 Msf.Client.Chat.JoinChannel("Global", (successful, error) =>
@@ -71,6 +77,7 @@ namespace GW.MasterServer
             chatChannelLabel.text = chatChannel.ToString();
         }
 
+        //Takes input from the chatInputField to detect what type of chat to send
         public void SelectChatType()
         {
             switch (chatChannel)
@@ -79,7 +86,10 @@ namespace GW.MasterServer
                     SendChat();
                     break;
                 case ChatChannel.Private:
-                    SendPrivateMessage("Exetorius");
+                    DetectPlayernameForPrivateMessage();
+                    break;
+                case ChatChannel.Channel:
+                    //Create a method to take channel name here
                     break;
             }
         }
@@ -93,14 +103,47 @@ namespace GW.MasterServer
                 Msf.Client.Chat.SendToDefaultChannel(message, (successful, error) => { });
         }
 
-        void SendPrivateMessage(string username)
+        #region PrivateMessage
+        void DetectPlayernameForPrivateMessage()
         {
             string message = chatInputField.text;
 
+            if (message == "")
+                return;
+
+            //Detect text input between quotations
+            var reg = new Regex("\".*?\"");
+            var username = reg.Match(message);
+            int removeText = username.ToString().Length;
+
+            //Remove "Playername" plus whitepace from start of message
+            string messageToSend = message.Substring(removeText + 1);
+
+            SendPrivateMessage(username.ToString().Trim('"'), messageToSend);
+        }
+
+        void SendPrivateMessage(string username, string message)
+        {
             // Send a private message
             if (message != "" && chatChannel == ChatChannel.Private)
-                Msf.Client.Chat.SendPrivateMessage(username, message, (successful, error) => { });
+                Msf.Client.Chat.SendPrivateMessage(username, message, (successful, error) => 
+                {
+                    if (!successful)
+                        UserNotOnlineMessage(username);
+                });
         }
+
+        void UserNotOnlineMessage(string username)
+        {
+            GameObject chat = Instantiate(chatMessage, chatPanel);
+            TMP_Text tChat = chat.GetComponentInChildren<TMP_Text>();
+
+            tChat.text =  "*** \"" + username + "\"" + " not found or user is offline! ***";
+            tChat.color = Color.red;
+
+            ClearTextField();
+        }
+        #endregion PrivateMessage
 
         private void OnMessageReceived(ChatMessagePacket message)
         {
@@ -111,24 +154,35 @@ namespace GW.MasterServer
             {
                 // Received a private message
                 case ChatMessageType.PrivateMessage:
-                    string messageToDisplay = string.Format("From [{0}]: {1}",
-                        message.Sender, // Channel name
-                        message.Message);                    
-                    tChat.text = messageToDisplay;
-                    tChat.color = Color.magenta;
-                    ClearTextField();
+                    string messageToDisplay;
+                    if (message.Sender != profileSettingsView.DisplayName)
+                    {
+                        messageToDisplay = string.Format("From [{0}]: {1}",
+                        message.Sender, // User name
+                        message.Message);
+                        tChat.text = messageToDisplay;
+                        tChat.color = Color.magenta;
+                    }
+                    else if (message.Sender == profileSettingsView.DisplayName)
+                    {
+                        messageToDisplay = string.Format("To [{0}]: {1}",
+                        message.Receiver, // User name
+                        message.Message);
+                        tChat.text = messageToDisplay;
+                        tChat.color = Color.magenta;
+                    }
                     break;
 
                 //Received a channel message
-                case ChatMessageType.ChannelMessage:                    
+                case ChatMessageType.ChannelMessage:
                     messageToDisplay = string.Format("[{0}] [{1}]: {2}",
                         message.Receiver, //Channel name
-                        message.Sender,
+                        message.Sender, //User name
                         message.Message);
                     tChat.text = messageToDisplay;
-                    ClearTextField();
                     break;
             }
+            ClearTextField();           
         }
         
         public void SetChatActive()

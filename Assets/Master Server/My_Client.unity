@@ -11898,11 +11898,11 @@ RectTransform:
   m_Father: {fileID: 49279482}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 625, y: 85}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -20, y: 300}
   m_SizeDelta: {x: 160, y: 30}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 1, y: 0}
 --- !u!114 &1656232714
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13932,7 +13932,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   logLevel: 3
   readMasterServerAddressFromCmd: 1
-  serverIp: 127.0.0.1
+  serverIp: 18.130.148.150
   serverPort: 5000
   connectOnStart: 1
   minTimeToConnect: 0.5

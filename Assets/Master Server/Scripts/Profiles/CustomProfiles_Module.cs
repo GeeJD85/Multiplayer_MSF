@@ -54,7 +54,7 @@ namespace GW.MasterServer
             foreach (var profile in ProfilesList.Values)
             {
                 var levelProperty = profile.GetProperty<ObservableFloat>((short)ObservablePropertiyCodes.Level);
-                levelProperty.Add(value);
+                levelProperty.Set(value);
             }
         }
 
@@ -63,7 +63,7 @@ namespace GW.MasterServer
             foreach (var profile in ProfilesList.Values)
             {
                 var xpProperty = profile.GetProperty<ObservableFloat>((short)ObservablePropertiyCodes.XP);
-                xpProperty.Add(value);
+                xpProperty.Set(value);
             }
         }
 
@@ -72,7 +72,7 @@ namespace GW.MasterServer
             foreach (var profile in ProfilesList.Values)
             {
                 var goldProperty = profile.GetProperty<ObservableFloat>((short)ObservablePropertiyCodes.Gold);
-                goldProperty.Add(value);
+                goldProperty.Set(value);
             }
         }
 

@@ -579,13 +579,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 643b72b2583b2ad4f83aae31a07036cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  smtpHost: smtp.gmail.com
-  smtpUsername: geejd85@gmail.com
-  smtpPassword: JackDaniel585!
+  smtpHost: smtp.live.com
+  smtpUsername: gee85@hotmail.co.uk
+  smtpPassword: Jackdaniel585
   smtpPort: 587
   enableSsl: 1
   timeoutInSeconds: 60
-  mailFrom: geejd85@gmail.com
+  mailFrom: gee85@hotmail.co.uk
   senderDisplayName: MSF_Test
   emailBodyTemplate: {fileID: 4900000, guid: 6397dd8c110436a4ea30b256b0493b84, type: 3}
 --- !u!1 &582703837
@@ -725,6 +725,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f417d1f49e06b646b3c1987d7cf7286, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  chatChannel: 0
+  chatInputField: {fileID: 0}
+  chatPanel: {fileID: 0}
+  chatMessage: {fileID: 0}
+  chatChannelLabel: {fileID: 0}
 --- !u!4 &601221692
 Transform:
   m_ObjectHideFlags: 0
@@ -1287,7 +1292,7 @@ MonoBehaviour:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
-          m_FloatArgument: 0
+          m_FloatArgument: 1
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
