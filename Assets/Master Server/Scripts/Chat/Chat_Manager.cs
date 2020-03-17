@@ -28,8 +28,7 @@ namespace GW.MasterServer
         int chatType;
 
         private void Awake()
-        {
-            profileSettingsView = ViewsManager.GetView<ProfileSettings_View>("ProfileSettingsView");
+        {            
             Msf.Client.Chat.OnMessageReceivedEvent += OnMessageReceived;
             chatChannelLabel.text = chatChannel.ToString();
             chatChannel = ChatChannel.Global;
@@ -37,6 +36,8 @@ namespace GW.MasterServer
 
         public void JoinChat()
         {
+            profileSettingsView = ViewsManager.GetView<ProfileSettings_View>("ProfileSettingsView");
+
             MsfTimer.WaitForEndOfFrame(() =>
             {
                 Msf.Client.Chat.JoinChannel("Global", (successful, error) =>
@@ -107,6 +108,9 @@ namespace GW.MasterServer
         {
             string message = chatInputField.text;
 
+            if (message == "")
+                return;
+
             //Detect text input between quotations
             var reg = new Regex("\".*?\"");
             var username = reg.Match(message);
@@ -150,27 +154,35 @@ namespace GW.MasterServer
             {
                 // Received a private message
                 case ChatMessageType.PrivateMessage:
-                    string messageToDisplay = string.Format("From [{0}]: {1}",
-                        message.Sender, // User name
-                        message.Message);  
-                    if(message.Sender != profileSettingsView.DisplayName)
+                    string messageToDisplay;
+                    if (message.Sender != profileSettingsView.DisplayName)
                     {
+                        messageToDisplay = string.Format("From [{0}]: {1}",
+                        message.Sender, // User name
+                        message.Message);
                         tChat.text = messageToDisplay;
                         tChat.color = Color.magenta;
-                    }                    
-                    ClearTextField();
+                    }
+                    else if (message.Sender == profileSettingsView.DisplayName)
+                    {
+                        messageToDisplay = string.Format("To [{0}]: {1}",
+                        message.Receiver, // User name
+                        message.Message);
+                        tChat.text = messageToDisplay;
+                        tChat.color = Color.magenta;
+                    }
                     break;
 
                 //Received a channel message
-                case ChatMessageType.ChannelMessage:                    
+                case ChatMessageType.ChannelMessage:
                     messageToDisplay = string.Format("[{0}] [{1}]: {2}",
                         message.Receiver, //Channel name
                         message.Sender, //User name
                         message.Message);
                     tChat.text = messageToDisplay;
-                    ClearTextField();
                     break;
             }
+            ClearTextField();           
         }
         
         public void SetChatActive()

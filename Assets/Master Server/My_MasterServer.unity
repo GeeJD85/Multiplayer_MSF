@@ -579,13 +579,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 643b72b2583b2ad4f83aae31a07036cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  smtpHost: smtp.gmail.com
-  smtpUsername: geejd85@gmail.com
-  smtpPassword: JackDaniel585!
+  smtpHost: smtp.live.com
+  smtpUsername: gee85@hotmail.co.uk
+  smtpPassword: Jackdaniel585
   smtpPort: 587
   enableSsl: 1
   timeoutInSeconds: 60
-  mailFrom: geejd85@gmail.com
+  mailFrom: gee85@hotmail.co.uk
   senderDisplayName: MSF_Test
   emailBodyTemplate: {fileID: 4900000, guid: 6397dd8c110436a4ea30b256b0493b84, type: 3}
 --- !u!1 &582703837
